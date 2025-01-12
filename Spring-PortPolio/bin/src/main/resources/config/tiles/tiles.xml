@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+  "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+	
+	<!-- main -->
+	<definition name="main" template="/WEB-INF/views/layouts/main/layout.jsp">
+		<put-attribute name="content" value="" />
+		<put-attribute name="header" value="/WEB-INF/views/layouts/common/header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layouts/common/footer.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/views/layouts/common/modal.jsp" />
+	</definition>
+	
+	<definition name="*/*.main" extends="main">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+	<definition name="*/*/*.main" extends="main">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+	</definition>
+	<definition name="*/*/*/*.main" extends="main">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<!-- popup -->
+	<definition name="popup" template="/WEB-INF/views/layouts/popup/layout.jsp">
+		<put-attribute name="content" value="" />
+		<put-attribute name="modal" value="/WEB-INF/views/layouts/common/modal.jsp" />
+	</definition>
+	
+	<definition name="*/*.popup" extends="popup">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+	<definition name="*/*/*.popup" extends="popup">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+	</definition>
+	<definition name="*/*/*/*.popup" extends="popup">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<!--타일즈 미적용 페이지 -->
+	<definition name="empty" template="/WEB-INF/views/layouts/empty/layout.jsp">
+		<put-attribute name="content" 	value="" />
+	</definition>
+	
+	<definition name="*/*.empty" extends="empty">
+         <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+     </definition>
+     
+     <definition name="*/*/*.empty" extends="empty">
+         <put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+     </definition>
+     <definition name="*/*/*/*.empty" extends="empty">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<!-- 타일즈 적용 -->
+	<!--  definition에서 name은 변수처럼 사용할 이름을 지정하고 template은 사용할 jsp를 지정 -->
+	<definition name="default_layout" template="/WEB-INF/views/layouts/base/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layouts/common/header.jsp" />
+		<put-attribute name="content" value=""/>
+		<put-attribute name="left" value="/WEB-INF/views/layouts/common/sidebar.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layouts/common/footer.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/views/layouts/common/modal.jsp"/>
+	</definition>
+	
+	<!-- controller에서 common/main 라는 view 경로를 호출했을 때, 이 tiles 설정이 적용된다. -->
+	<definition name="*/*" extends="default_layout">
+		<!-- content 부분만 호출 경로에 해당하는 view를 사용하고 나머지 부분(header 등)은 layouts에 속한 파일들을 따른 다는 의미  -->
+         <put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp" />
+     </definition>
+     
+      <definition name="*/*/*" extends="default_layout">
+         <put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+     </definition>
+     <definition name="*/*/*/*" extends="default_layout">
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+     
+     
+</tiles-definitions>

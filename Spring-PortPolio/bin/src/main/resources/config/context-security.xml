@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/security
+        https://www.springframework.org/schema/security/spring-security-5.8.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+    <!-- HTTP 보안 설정 -->
+    <http auto-config="false" use-expressions="true">
+    	<!-- csrf 비활성화  -->
+    	<csrf disabled="true" />
+        <intercept-url pattern="/resources/**" 	access="permitAll" />
+       	<intercept-url pattern="/common/**" access="permitAll" />
+       	<intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN')" />
+       	<intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER')" />
+        <!-- 로그인 설정 -->
+        <!--
+			login-page : form login 폼 페이지 지정
+			default-target-url : 로그인 성공시 이동할 페이지 지정
+			authentication-failure-handler-ref : 로그인 실패시 핸들러
+			authentication-success-handler-ref : 로그인 성공시 핸들러
+			username-parameter : 로그인 id 값
+			password-parameter : 로그인 비밀번호 값
+		-->
+        <form-login 
+            login-page="/common/login.do"  		
+            default-target-url="/common/main.do"
+            login-processing-url="/common/loginProcess.do"
+            authentication-failure-handler-ref="loginFailureHandler" 
+            authentication-success-handler-ref="loginSuccessHandler" 
+            username-parameter="user_id"
+            password-parameter="user_password" />
+
+        <!-- 로그아웃 설정 -->
+        <logout logout-url="/common/logout" logout-success-url="/common/login.do" invalidate-session="true" delete-cookies="JSESSIONID"/>
+    	<!-- 세션 관리 설정 -->
+    	<!-- 
+	    	session-managementinvalid-session-url : invalid session(세션 타임아웃 등) 일 때 이동 
+	    	URLmax-sessions : 최대 허용 가능한 세션 수
+	    	expired-url : 중복 로그인 발생시 이동 URL (처음 접속한 세션이 invalidate가 되고 다음 요청시 invalid-session-url로 이동)
+	    	error-if-maximum-exceeded : max-sessions을 넘었을때 접속한 세션을 실패처리할지 여부 (expired-url와 얘중에 하나만 쓰면 될듯)
+    	-->
+	     <session-management invalid-session-url="/common/login.do">
+	        <concurrency-control max-sessions="1" error-if-maximum-exceeded="false" />
+	    </session-management>
+    </http>
+
+	
+	
+    <!-- PasswordEncoder 설정 (Spring Security 5.8.1 권장사항) -->
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+	<!-- 로그인 성공/실패 핸들러 -->
+	 <beans:bean id="loginSuccessHandler"
+        class="iancms.global.auth.loginSuccessHandler" />
+
+       <beans:bean id="loginFailureHandler"
+        class="iancms.global.auth.loginFailureHandler" />
+	
+    <!-- CustomAuthenticationProvider 등록 -->
+    <authentication-manager>
+        <authentication-provider ref="customAuthenticationProvider" />
+    </authentication-manager>
+    
+    <!-- 로그인 권한 과정을 처리할 클래스 -->
+    <beans:bean id="customAuthenticationProvider" class="iancms.global.auth.customAuthenticationProvider" />
+	
+	<!-- 중복 로그인 방지 및 세션 설정 -->
+		<!-- <session-management session-fixation-protection="migrateSession" >
+        	<concurrency-control max-sessions="1" expired-url="/common/login.do?expired=true"/>
+        </session-management> -->
+	
+</beans:beans>

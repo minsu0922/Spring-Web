@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iancms.domain.admin.member.mapper.memberMapper">
+
+<!-- <resultMap id="memberMap" type="memberDto">
+		<result column="USER_ID" property="userId"/>
+		<result column="USER_PASSWORD" property="userPassword"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="USER_BIRTH" property="userBirth"/>
+		<result column="USER_CEL" property="userCel"/>
+		<result column="ZIP_CODE" property="zipCode"/>
+		<result column="USER_ADDR" property="userAddr"/>
+		<result column="USER_DETAIL_ADDR" property="userDetailAddr"/>
+		<result column="USER_EXTRA_ADDR" property="userExtraAddr"/>
+		<result column="USER_EMAIL" property="userEmail"/>
+		<result column="USER_ROLE" property="userRole"/>
+		<result column="DEL_YN" property="delYn"/>
+</resultMap> -->
+
+
+	<select id="memberList" parameterType="memberDto" resultType="memberDto">
+			SELECT
+				*
+			FROM USER_MN
+				WHERE 1=1
+			<if test="user_id != null and user_id != ''">
+				AND USER_ID = #{user_id}
+			</if>
+			<if test="search_type == 'user_id'">
+				AND REPLACE(USER_ID,' ','') LIKE '%' || REPLACE(#{search_word},' ','')|| '%' 
+			</if>
+			<if test="search_type == 'userName'">
+				AND REPLACE(USER_NAME,' ','') LIKE '%' || REPLACE(#{search_word},' ','')|| '%' 
+			</if>
+			<if test="(search_type == null or search_type == '') and search_word != null">
+		        AND (
+		            REPLACE(USER_NAME,' ','') LIKE '%' || REPLACE(#{search_word},' ','') || '%'
+		            OR REPLACE(USER_ID,' ','') LIKE '%' || REPLACE(#{search_word},' ','') || '%'
+		        )
+		    </if>
+		    <if test="search_auth != null and search_auth != ''">
+		    	AND USER_ROLE = #{search_auth}
+		    </if>
+		    <if test="search_del_yn != null and search_del_yn != ''">
+		    	AND DEL_YN = #{search_del_yn}
+		    </if>
+		    <if test="search_datestart != null and search_datestart != '' and search_dateend != null and search_dateend != ''">
+		    	AND INSERT_DATE BETWEEN #{search_datestart} AND #{search_dateend}
+		    </if>
+	</select>
+	<select id="memberInfo" parameterType="memberDto" resultType="memberDto">
+			SELECT
+				*
+			FROM USER_MN
+				WHERE USER_ID = #{user_id}
+	</select>
+	<update id ="memberPwreset" parameterType="String">
+			UPDATE
+				USER_MN
+			SET USER_PASSWORD = #{user_password}
+				WHERE USER_ID = #{user_id}
+	</update>
+	<update id ="memberUpdate" parameterType="memberDto">
+			UPDATE
+				USER_MN
+			SET USER_NAME = #{user_name}, 
+				USER_CEL = #{user_cel},
+				USER_BIRTH = #{user_birth},
+				USER_ROLE = #{user_role},
+				USER_EMAIL = #{user_email},
+				DEL_YN = #{del_yn},
+				ZIP_CODE = #{zip_code},
+				USER_ADDR = #{user_addr},
+				USER_DETAIL_ADDR = #{user_detail_addr},
+				USER_EXTRA_ADDR = #{user_extra_addr},
+				UPDATE_DATE = CURRENT_TIMESTAMP
+			WHERE USER_ID = #{user_id}
+	</update>
+	<update id ="memberDelete" parameterType="String">
+			UPDATE
+				USER_MN
+			SET DEL_YN = 'Y'
+				WHERE USER_ID = #{user_id}
+	</update>
+</mapper>

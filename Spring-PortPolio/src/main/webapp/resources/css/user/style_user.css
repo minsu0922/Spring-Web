@@ -1,0 +1,49 @@
+@charset "UTF-8";
+*{
+	margin: 0;
+	padding: 0;
+}
+.wrap{
+	width: 100%;
+}
+
+.Header, .content, .Footer{
+	width: 100%;
+	float: left;
+}
+
+.Header, .Footer{
+	height: 8em;
+}
+
+.SideBar{
+	width: 10%;
+	height: 600px;
+	background-color: rgb(190, 214, 231);
+	float: left;
+}
+
+.page_content{
+	width: 90%;
+	height: 600px;
+	background-color: rgb(204, 196, 189);
+	float: left;
+}
+
+.Header{
+	background-color: rgb(214, 235, 186);
+}
+
+.Footer{
+	background-color: rgb(240, 219, 242);
+}
+
+body {
+    margin: 0px;
+    font-family: 'Open sans';
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}

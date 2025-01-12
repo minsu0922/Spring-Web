@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <typeAliases>
+		<typeAlias alias="egovMap" type="org.egovframe.rte.psl.dataaccess.util.EgovMap"/>
+		<typeAlias alias="searchVO" type="iancms.domain.user.sample.vo.SampleDefaultVO"/>
+		<typeAlias alias="sampleVO" type="iancms.domain.user.sample.vo.SampleVO"/>
+		<typeAlias alias="commonDto" type="iancms.domain.user.common.vo.commonDto"/>
+		<typeAlias alias="loginDto" type="iancms.domain.user.common.vo.loginDto"/>
+		<typeAlias alias="customUser" type="iancms.domain.user.common.vo.customUser"/>
+		<typeAlias alias="atchFileVO" type="iancms.domain.user.common.vo.atchFileVO"/>
+		<typeAlias alias="atchFileDto" type="iancms.domain.user.common.vo.atchFileDto"/>
+		<typeAlias alias="menuDto" type="iancms.domain.admin.menu.vo.menuDto"/>
+		<typeAlias alias="memberDto" type="iancms.domain.admin.member.vo.memberDto"/>
+		<typeAlias alias="mainSlideDto" type="iancms.domain.admin.popban.vo.mainSlideDto"/>
+		<typeAlias alias="bannerDto" type="iancms.domain.admin.popban.vo.bannerDto"/>
+		<typeAlias alias="popupDto" type="iancms.domain.admin.popban.vo.popupDto"/>
+		<typeAlias alias="systemDto" type="iancms.domain.admin.system.vo.systemDto"/>
+    </typeAliases>
+</configuration>

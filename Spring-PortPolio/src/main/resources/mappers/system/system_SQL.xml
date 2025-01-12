@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="iancms.domain.admin.system.mapper.systemMapper">
+
+	<!-- paging -->
+	<sql id="paging-start">
+		<if test="currentPage != null and currentPage > -1">
+		SELECT Z.* FROM (SELECT ROWNUM AS RNUM, TB.* FROM (
+		</if>
+	</sql>
+	
+	<sql id="paging-end">
+		<if test="currentPage != null and currentPage > -1">
+			) TB
+		) Z
+		WHERE Z.RNUM BETWEEN (#{currentPage} - 1) * #{recordPerPageCnt} + 1 AND  #{currentPage} * #{recordPerPageCnt}
+		ORDER BY Z.RNUM ASC
+		</if>
+	</sql>
+	<!-- /paging -->
+	
+	<select id="comCdList" parameterType="systemDto" resultType="systemDto">
+			SELECT
+				*
+			FROM COM_CD
+				WHERE com_cd.del_yn != 'Y'
+	</select>
+	<select id="comCdDtlList" parameterType="systemDto" resultType="systemDto">
+			SELECT
+				A.COM_CD_SN, A.CD, A.CD_NM, B.USE_YN, B.COM_CD_DTL_SN, B.DTL_CD, B.DTL_CD_NM
+			FROM COM_CD A, COM_CD_DTL B
+				WHERE A.COM_CD_SN = B.COM_CD_SN
+				AND B.DEL_YN != 'Y'
+				AND B.COM_CD_SN = #{com_cd_sn}
+	</select>
+	
+	<insert id="comCdInsert" parameterType="systemDto">
+		INSERT INTO COM_CD
+			(cd, cd_nm, cd_description, use_yn, rgtr_id, mdfr_id, mdfcn_de, del_yn) values 
+			(#{cd}, #{cd_nm}, #{cd_description}, #{use_yn}, null, null, null, 'N')
+	</insert>
+	
+	<update id="comCdUpdate" parameterType="systemDto">
+		UPDATE COM_CD
+			SET
+			(cd, cd_nm, cd_description, use_yn) = (#{cd}, #{cd_nm}, #{cd_description}, #{use_yn})
+		WHERE COM_CD_SN = #{com_cd_sn}
+	</update>
+	
+	<update id="comCdDelete" parameterType="String">
+		UPDATE COM_CD A, COM_CD_DTL B
+			SET A.DEL_YN = 'Y',
+				B.DEL_YN =
+				CASE 
+					WHEN A.COM_CD_SN = B.COM_CD_SN 
+						THEN 'Y'
+					ELSE B.DEL_YN
+				END
+		WHERE A.com_cd_sn = #{com_cd_sn}
+	</update>
+	
+	<insert id="comCdDtlInsert" parameterType="systemDto">
+		INSERT INTO COM_CD_DTL
+			(com_cd_sn, dtl_cd, dtl_cd_nm, use_yn, rgtr_id, mdfr_id, mdfcn_de, del_yn) values 
+			(#{com_cd_sn}, #{dtl_cd}, #{dtl_cd_nm}, #{use_yn}, null, null, null, 'N')
+	</insert>
+	
+	<update id="comCdDtlUpdate" parameterType="systemDto">
+		UPDATE COM_CD_DTL
+			SET
+			(dtl_cd, dtl_cd_nm, use_yn) = (#{dtl_cd}, #{dtl_cd_nm}, #{useYn})
+		WHERE COM_CD_DTL_SN = #{com_cd_dtl_sn}
+	</update>
+	
+	<update id="comCdDtlDelete" parameterType="String">
+		UPDATE COM_CD_DTL
+			SET DEL_YN = 'Y', USE_YN = 'N'
+		WHERE
+			COM_CD_DTL_SN = #{com_cd_dtl_sn}
+	</update>
+	
+	<!-- 로그를 저장한다 -->
+	<insert id="insert_Log" parameterType="Map">
+		INSERT INTO
+		lgn_log (
+			user_id,
+			user_password,
+			user_name,
+			success_yn,
+			lgn_ip_addr,
+			user_role,
+			message
+		)
+	VALUES (
+			#{user_id},
+			#{user_password},
+			#{user_name},
+			#{success_yn},
+			#{lgn_ip_addr},
+			#{user_role},
+			#{message}
+		)
+	</insert>
+
+</mapper>

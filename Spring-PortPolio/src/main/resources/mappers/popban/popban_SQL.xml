@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="iancms.domain.admin.popban.mapper.popbanMapper">
+
+	<!-- 메인 슬라이드 관리 -->
+    <select id="mainSlideList" resultType="mainSlideDto">
+        SELECT * FROM cms_popban where del_yn = 'N' and popban_gubun = 1
+         <if test="search_site_sn != null and search_site_sn != ''">
+	    	AND SITE_SN = #{search_site_sn}
+	    </if>
+        <if test="search_use_yn != null and search_use_yn != ''">
+	    	AND USE_YN = #{search_use_yn}
+	    </if>
+	    <if test="search_datestart != null and search_datestart != '' and search_dateend != null and search_dateend != ''">
+	    	AND REG_DT BETWEEN #{search_datestart} AND #{search_dateend}
+	    </if>
+	    <if test="search_word != null and search_word != ''">
+			AND REPLACE(POPBAN_NM,' ','') LIKE '%' || REPLACE(#{search_word},' ','')|| '%' 
+		</if> 
+    </select>
+    
+    <select id="mainSlideInfo" resultType="mainSlideDto">
+        SELECT * FROM cms_popban where popban_sn = #{popban_sn}
+    </select>
+    
+    <!-- 메뉴관리 정리된 후에 menu_id 하드코딩으로 넣기 -->
+    <update id ="mainSlideRegist" parameterType="mainSlideDto">
+			INSERT INTO CMS_POPBAN (
+										POPBAN_GUBUN,
+								        POPBAN_SN,
+								        MENU_ID,
+								        ATCH_SN_PC,
+								        ATCH_SN_MOBILE,
+								        SITE_SN,
+								        POPBAN_TYPE,
+								        POPBAN_NM,
+								        POPBAN_DESC,
+								        POPBAN_ALT_PC,
+								        POPBAN_ALT_MOBILE,
+								        USE_YN,
+								        RGTR_ID,
+								        REG_DT,
+								        MDFR_ID,
+								        MDFCN_DT,
+								        POPBAN_START_DT,
+								        POPBAN_END_DT,
+								        POPBAN_ORDER
+								    )
+								    VALUES (
+								    	1,
+								    	#{popban_sn},
+								        #{menu_id},
+								        #{atch_sn_pc},
+								        #{atch_sn_mobile},
+								        #{site_sn},
+								        #{popban_type},
+								        #{popban_nm},
+								        #{popban_desc},
+								        #{popban_alt_pc},
+								        #{popban_alt_mobile},
+								        #{use_yn},
+								        #{rgtr_id},
+								        current_date,
+								        #{mdfr_id},
+								        current_date,
+								        #{popban_start_dt},
+								        #{popban_end_dt},
+								        #{popban_order}
+								    )
+	</update>
+    
+    <update id ="mainSlideUpdate" parameterType="mainSlideDto">
+			UPDATE
+				CMS_POPBAN
+			SET 
+				MENU_ID = #{menu_id},
+		        ATCH_SN_PC = #{atch_sn_pc},
+				ATCH_SN_MOBILE = #{atch_sn_mobile},
+		        SITE_SN = #{site_sn},
+		        POPBAN_TYPE = #{popban_type},
+		        POPBAN_NM = #{popban_nm},
+		        POPBAN_DESC = #{popban_desc},
+		        POPBAN_ALT_PC = #{popban_alt_pc},
+		        POPBAN_ALT_MOBILE = #{popban_alt_mobile},
+		        USE_YN = #{use_yn},
+		        RGTR_ID = #{rgtr_id},
+		        REG_DT = #{reg_dt},
+		        MDFR_ID = #{mdfr_id},
+		        MDFCN_DT = #{mdfcn_dt},
+		        POPBAN_START_DT = #{popban_start_dt},
+		        POPBAN_END_DT = #{popban_end_dt},
+		        POPBAN_ORDER = #{popban_order},
+		        POPBAN_URL = #{popban_url}
+			WHERE POPBAN_SN = #{popban_sn}
+	</update>
+	<update id ="mainSlideDelete" parameterType="String">
+			UPDATE
+				CMS_POPBAN
+			SET DEL_YN = 'Y'
+				WHERE POPBAN_SN = #{popban_sn}
+	</update>
+	
+	<!-- 팝업창 관리 -->
+	<select id="popupList" resultType="popupDto">
+        SELECT * FROM cms_popban where del_yn = 'N' and popban_gubun = 2
+    </select>
+    
+    <select id="popupInfo" resultType="popupDto">
+        SELECT * FROM cms_popban where popban_sn = #{popban_sn}
+    </select>
+    
+    <update id ="popupRegist" parameterType="popupDto">
+			INSERT INTO CMS_POPBAN (
+										POPBAN_GUBUN,
+								        MENU_ID,
+								        ATCH_SN,
+								        SITE_SN,
+								        POPBAN_TYPE,
+								        POPBAN_NM,
+								        POPBAN_DESC,
+								        USE_YN,
+								        RGTR_ID,
+								        REG_DT,
+								        MDFR_ID,
+								        MDFCN_DT,
+								        POPBAN_START_DT,
+								        POPBAN_END_DT,
+								        POPBAN_ORDER,
+								        POPBAN_URL
+								    )
+								    VALUES (
+								    	2,
+								        #{menu_id},
+								        #{atch_sn},
+								        #{site_sn},
+								        #{popban_type},
+								        #{popban_nm},
+								        #{popban_desc},
+								        #{use_yn},
+								        #{rgtr_id},
+								        #{reg_dt},
+								        #{mdfr_id},
+								        #{mdfcn_dt},
+								        #{popban_start_dt},
+								        #{popban_end_dt},
+								        #{popban_order},
+								        #{popban_url}
+								    )
+	</update>
+    
+    <update id ="popupUpdate" parameterType="popupDto">
+			UPDATE
+				CMS_POPBAN
+			SET 
+				MENU_ID = #{menu_id},
+		        ATCH_SN = #{atch_sn},
+		        SITE_SN = #{site_sn},
+		        POPBAN_TYPE = #{popban_type},
+		        POPBAN_NM = #{popban_nm},
+		        POPBAN_DESC = #{popban_desc},
+		        USE_YN = #{use_yn},
+		        RGTR_ID = #{rgtr_id},
+		        REG_DT = #{reg_dt},
+		        MDFR_ID = #{mdfr_id},
+		        MDFCN_DT = #{mdfcn_dt},
+		        POPBAN_START_DT = #{popban_start_dt},
+		        POPBAN_END_DT = #{popban_end_dt},
+		        POPBAN_ORDER = #{popban_order},
+		        POPBAN_URL = #{popban_url}
+			WHERE POPBAN_SN = #{popban_sn}
+	</update>
+	<update id ="popupDelete" parameterType="String">
+			UPDATE
+				CMS_POPBAN
+			SET DEL_YN = 'Y'
+				WHERE POPBAN_SN = #{popban_sn}
+	</update>
+	
+	<!-- 배너 관리 -->
+	<select id="bannerList" resultType="bannerDto">
+        SELECT * FROM cms_popban where del_yn = 'N' and popban_gubun = 3
+    </select>
+    
+    <select id="bannerInfo" resultType="bannerDto">
+        SELECT * FROM cms_popban where popban_sn = #{popban_sn}
+    </select>
+    
+    <update id ="bannerRegist" parameterType="bannerDto">
+			INSERT INTO CMS_POPBAN (
+										POPBAN_GUBUN,
+								        MENU_ID,
+								        ATCH_SN,
+								        SITE_SN,
+								        POPBAN_TYPE,
+								        POPBAN_NM,
+								        POPBAN_DESC,
+								        USE_YN,
+								        RGTR_ID,
+								        REG_DT,
+								        MDFR_ID,
+								        MDFCN_DT,
+								        POPBAN_START_DT,
+								        POPBAN_END_DT,
+								        POPBAN_ORDER,
+								        POPBAN_URL
+								    )
+								    VALUES (
+								    	3,
+								        #{menu_id},
+								        #{atch_sn},
+								        #{site_sn},
+								        #{popban_type},
+								        #{popban_nm},
+								        #{popban_desc},
+								        #{use_yn},
+								        #{rgtr_id},
+								        #{reg_dt},
+								        #{mdfr_id},
+								        #{mdfcn_dt},
+								        #{popban_start_dt},
+								        #{popban_end_dt},
+								        #{popban_order},
+								        #{popban_url}
+								    )
+	</update>
+    
+    <update id ="bannerUpdate" parameterType="bannerDto">
+			UPDATE
+				CMS_POPBAN
+			SET 
+				MENU_ID = #{menu_id},
+		        ATCH_SN = #{atch_sn},
+		        SITE_SN = #{site_sn},
+		        POPBAN_TYPE = #{popban_type},
+		        POPBAN_NM = #{popban_nm},
+		        POPBAN_DESC = #{popban_desc},
+		        USE_YN = #{use_yn},
+		        RGTR_ID = #{rgtr_id},
+		        REG_DT = #{reg_dt},
+		        MDFR_ID = #{mdfr_id},
+		        MDFCN_DT = #{mdfcn_dt},
+		        POPBAN_START_DT = #{popban_start_dt},
+		        POPBAN_END_DT = #{popban_end_dt},
+		        POPBAN_ORDER = #{popban_order},
+		        POPBAN_URL = #{popban_url}
+			WHERE POPBAN_SN = #{popban_sn}
+	</update>
+	<update id ="bannerDelete" parameterType="String">
+			UPDATE
+				CMS_POPBAN
+			SET DEL_YN = 'Y'
+				WHERE POPBAN_SN = #{popban_sn}
+	</update>
+</mapper>

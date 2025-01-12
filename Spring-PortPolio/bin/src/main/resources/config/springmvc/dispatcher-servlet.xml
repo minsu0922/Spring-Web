@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+<!--     <context:component-scan base-package="egovframework">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan> -->
+    
+    <context:component-scan base-package="iancms">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+         <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="iancms.global.config.EgovBindingInitializer"/>
+        </property>
+    </bean>
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="localeChangeInterceptor" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+    <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="language" />
+    </bean>
+
+   <!--  <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="common/error/egovError"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataAccessException">common/error/dataAccessFailure</prop>
+                <prop key="org.springframework.transaction.TransactionException">common/error/transactionFailure</prop>
+                <prop key="org.egovframe.rte.fdl.cmmn.exception.EgovBizException">common/error/egovError</prop>
+                <prop key="org.springframework.security.AccessDeniedException">common/error/egovError</prop>
+            </props>
+        </property>
+    </bean> -->
+	
+	
+	<!--tiles ViewResolver-->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	     <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
+	     <property name="order" value="1"/>
+	</bean>
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	    <property name="definitions">
+	        <list>
+	            <value>classpath:config/tiles/tiles.xml</value><!-- 경로 classpath로 변경 -->
+	        </list>
+	    </property>
+	</bean>
+	
+	<!--ViewResolver-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	     <property name="prefix" value="/WEB-INF/views/"/>
+	     <property name="suffix" value=".jsp"/>
+	     <property name="order" value="2"/>
+	</bean>
+	
+	<!-- interceptor -->
+	<mvc:interceptors>
+		<!-- <mvc:interceptor>
+			<mvc:mapping path="/**/*.do" />
+			<bean id="sessionInterceptor" class="kr.go.molit.nsdp.global.config.SessionInterceptor" />
+		</mvc:interceptor> -->
+		<mvc:interceptor>
+			<mvc:mapping path="/admin/**/*.do" />
+			<bean id="loggingInterceptor" class="iancms.global.config.loggingInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<!-- /interceptor -->
+	
+	
+    <!-- For Pagination Tag -->
+   	<bean id="imageRenderer" class="iancms.global.common.EgovImgPaginationRenderer"/>
+
+    <bean id="paginationManager" class="org.egovframe.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
+        <property name="rendererType">
+            <map>
+                <entry key="image" value-ref="imageRenderer"/>
+            </map>
+        </property>
+    </bean>
+	<!-- /For Pagination Tag -->
+
+    <mvc:view-controller path="/cmmn/validator.do" view-name="common/error/validator"/>
+    
+</beans>

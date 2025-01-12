@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iancms.domain.user.common.mapper.commonMapper">
+	<!-- paging -->
+	<sql id="paging-start">
+		<if test="currentPage != null and currentPage > -1">
+		SELECT Z.* FROM (SELECT ROWNUM AS RNUM, TB.* FROM (
+		</if>
+	</sql>
+	
+	<sql id="paging-end">
+		<if test="currentPage != null and currentPage > -1">
+			) TB
+		) Z
+		WHERE Z.RNUM BETWEEN (#{currentPage} - 1) * #{recordPerPageCnt} + 1 AND  #{currentPage} * #{recordPerPageCnt}
+		ORDER BY Z.RNUM ASC
+		</if>
+	</sql>
+	<!-- /paging -->
+	
+	<select id="selectSample" parameterType="commonDto"
+		resultType="commonDto">
+		<include refid="paging-start"></include>
+		SELECT
+			ID, NAME, DESCRIPTION, USE_YN, REG_USER
+		FROM board
+		<include refid="paging-end"></include>
+	</select>
+
+	<select id="loginUser" parameterType="loginDto" resultType="loginDto">
+		SELECT
+		*
+		FROM
+		user_mn
+		where
+		user_id = #{user_id}
+	</select>
+	
+	<select id="loginCheck" parameterType="String" resultType="customUser">
+		SELECT
+		*
+		FROM
+		user_mn
+		where
+		user_id = #{user_id}
+	</select>
+
+	<select id="chkUserId" parameterType="String" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			user_mn
+		where
+			user_id = #{user_id}
+	</select>
+
+	<insert id="sign_up_User" parameterType="loginDto">
+		INSERT INTO user_mn
+			(user_id, user_password, user_name, user_birth, user_cel, zip_code,
+		user_addr, user_detail_addr, user_extra_addr, user_email,user_role)
+		values(#{user_id},#{user_password},#{user_name},#{user_birth},#{user_cel},#{zip_code}
+		,#{user_addr},#{user_detail_addr},#{user_extra_addr},#{user_email},#{user_role})
+	</insert>
+	
+	<!-- 로그를 저장한다 -->
+	<insert id="insert_Log" parameterType="Map">
+		INSERT INTO
+		lgn_log (
+			user_id,
+			user_password,
+			user_name,
+			success_yn,
+			lgn_ip_addr,
+			user_role,
+			message
+		)
+	VALUES (
+			#{user_id},
+			#{user_password},
+			#{user_name},
+			#{success_yn},
+			#{lgn_ip_addr},
+			#{user_role},
+			#{message}
+		)
+	</insert>
+</mapper>

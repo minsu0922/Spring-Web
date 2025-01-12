@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iancms.domain.admin.menu.mapper.menuMapper">
+	<insert id="insert_menu_list" parameterType="menuDto">
+		INSERT INTO
+	cms_menu (
+		menu_id,
+		menu_nm,
+		up_menu_id,
+		up_menu_nm,
+		menu_type,
+		menu_url,
+		menu_order,
+		menu_depth,
+		use_yn,
+		admin_allow,
+		manage_allow,
+		user_allow
+		)
+	VALUES
+		(
+		<if test='top_menu_yn == "N"'>
+		        #{menu_id} || '_' || menu_no.NEXT_VALUE,
+		</if>
+		<if test='top_menu_yn == "Y"'>
+		        #{menu_id}, 
+		</if>
+		#{menu_nm}
+		,#{up_menu_id}
+		,#{up_menu_nm}
+		,#{menu_type}
+		,#{menu_url}
+		,#{menu_order}
+		,#{menu_depth}
+		,#{use_yn}
+		,#{admin_allow}
+		,#{manage_allow}
+		,#{user_allow})
+	</insert>
+	
+	<select id="select_menu_list" parameterType="menuDto" resultType="EgovMap">
+		SELECT
+			menu_id,
+			menu_nm,
+			CASE WHEN up_menu_id = '' THEN '#'
+	            ELSE up_menu_id
+	            END AS up_menu_id,
+			CASE WHEN up_menu_nm = '' THEN '#'
+	            ELSE up_menu_nm
+	            END AS up_menu_nm,
+			menu_type,
+			menu_url,
+			menu_depth,
+			menu_order,
+			rgtr_id,
+			reg_dt,
+			mdfr_id,
+			mdfcn_dt,
+			del_yn,
+			use_yn,
+			admin_allow,
+			manage_allow,
+			user_allow
+		FROM
+			cms_menu A
+		WHERE 1=1
+		<if test="menu_depth != null and menu_depth != ''">
+			 <![CDATA[
+			  AND A.menu_depth < 3
+			   ]]>
+		</if>
+		<if test="menu_type != null and menu_type != ''">
+		        AND	menu_type = #{menu_type}
+		</if>
+		<if test="menu_url != null and menu_url != ''">
+		        AND	menu_url = #{menu_url}
+		</if>
+		<if test="searchKeyword != null and searchKeyword != ''">
+		        AND	menu_nm LIKE '%' || #{searchKeyword} || '%'
+		</if>
+		ORDER BY A.menu_depth ASC, A.menu_order ASC
+	</select>
+	
+	<select id="select_menu_url" parameterType="String" resultType="menuDto">
+		SELECT
+			menu_id,
+			menu_nm,
+			CASE WHEN up_menu_id = '' THEN '#'
+	            ELSE up_menu_id
+	            END AS up_menu_id,
+			CASE WHEN up_menu_nm = '' THEN '#'
+	            ELSE up_menu_nm
+	            END AS up_menu_nm,
+			menu_type,
+			menu_url,
+			menu_depth,
+			menu_order,
+			rgtr_id,
+			reg_dt,
+			mdfr_id,
+			mdfcn_dt,
+			del_yn,
+			use_yn,
+			admin_allow,
+			manage_allow,
+			user_allow
+		FROM
+			cms_menu A
+		WHERE 1=1
+		<if test="menu_url != null and menu_url != ''">
+		        AND	menu_url = #{menu_url}
+		</if>
+	</select>
+	
+	<!-- 메뉴 목록을 가져온다 -->
+	<!-- <select id="select_Menu_List" parameterType="menuDto" resultType="EgovMap">
+	    SELECT A.*, DECODE(A.menu_up_id, 'TOP', '최상위메뉴', B.menu_id) AS menu_up_nm
+		FROM cms_menu A, cms_menu B
+	    WHERE 1=1
+	    AND A.menu_up_id = B.menu_id(+)
+	    <choose>
+	    <when test="selCd != null and !selCd.equals('')">
+	    <![CDATA[
+	    AND A.MENU_DEPTH < 3
+	    ]]>
+	    </when>
+	    <otherwise>
+	    <![CDATA[
+	    AND A.MENU_DEPTH < 4
+	    ]]>
+	    </otherwise>
+	    </choose>
+	    <if test="menuType != null and !menuType.equals('')">
+	    AND A.MENU_TYPE = #{menuType}
+	    </if>
+	    ORDER BY A.menu_depth ASC, A.menu_order ASC
+	</select> -->
+	
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iancms.domain.user.common.mapper.atchFileMapper">
+
+<!-- <resultMap id="atchMap" type="atchFileDto">
+		<result column="ATCH_SN" property="atchSn"/>
+		<result column="ATCH_NM" property="atchNm"/>
+		<result column="FILE_PATH" property="filePath"/>
+		<result column="FILE_EXTN" property="fileExtn"/>
+		<result column="FILE_SIZE" property="fileSize"/>
+		<result column="DOWN_CNT" property="downCnt"/>
+		<result column="DEL_YN" property="delYn"/>
+		<result column="RGTR_ID" property="rgtrId"/>
+		<result column="REG_DT" property="regDt"/>
+		<result column="MDFR_ID" property="mdfrId"/>
+		<result column="MDFCN_DT" property="mdfcnDt"/>
+</resultMap> -->
+
+	<insert id="fileUpload" parameterType="atchFileDto">
+		INSERT INTO 
+			CMS_ATCH_FILE
+		(ATCH_ID, ATCH_NM, FILE_PATH, FILE_EXTN, FILE_SIZE, RGTR_ID, REG_DT, MDFR_ID, MDFCN_DT, ATCH_SN) VALUES
+		(atch_id.NEXT_VALUE, #{atch_nm}, #{file_path}, #{file_extn}, #{file_size}, #{rgtr_id}, CURRENT_TIMESTAMP, #{mdfr_id}, #{mdfcn_dt}, #{atch_sn})
+	</insert>
+	
+	<select id="atchFileList" parameterType="atchFileDto" resultType="atchFileDto">
+		SELECT 
+			ATCH_ID, ATCH_NM, FILE_PATH, FILE_EXTN, FILE_SIZE, RGTR_ID, REG_DT, MDFR_ID, MDFCN_DT
+	    FROM CMS_ATCH_FILE
+	    	WHERE DEL_YN = 'N'
+	</select>
+	
+	<update id="updateAtchFileDown" parameterType="int">
+		UPDATE 
+			CMS_ATCH_FILE
+		SET DOWN_CNT = DOWN_CNT + 1
+			WHERE ATCH_ID = #{atch_id}
+	</update>
+	
+	<select id="fileDownload" parameterType="atchFileDto" resultType="atchFileDto">
+		SELECT 
+			ATCH_NM, FILE_PATH, FILE_EXTN
+		FROM CMS_ATCH_FILE
+			WHERE ATCH_ID = #{atch_id}
+	</select>
+	
+	<update id="fileDelete" parameterType="int">
+		UPDATE 
+			CMS_ATCH_FILE
+		SET DEL_YN = 'Y'
+			WHERE ATCH_ID = #{atch_id}
+	</update>
+	
+</mapper>
